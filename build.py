@@ -22,9 +22,9 @@ def main(flags):
     # NOTE: We are a single file operation, so we just
     # compile directly to a binary
     Path("build").mkdir(exist_ok=True)
-    cmd.append("src/run-shell.c")
-    cmd.extend(["-o", "build/run-shell"])
-    print("Compiling src/run-shell.c -> run-shell (executable)")
+    cmd.append("src/wrap-shell.c")
+    cmd.extend(["-o", "build/wrap-shell"])
+    print("Compiling src/wrap-shell.c -> wrap-shell (executable)")
     run(cmd, check=True)
 
 if __name__ == "__main__":

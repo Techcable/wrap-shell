@@ -17,8 +17,9 @@ struct parsed_flags {
 // It aint much bit its honest work
 #include "idiot_argparse.h"
 
-const char *HELP = "run-shell - The simple shell manager\n\n"
+const char *HELP = "wrap-shell - The simple shell manager\n\n"
     "Will find and run the user's prefered shell, with an optional fallback\n"
+    "Source: https://github.com/Techacble/wrap-shell\n"
     "\n"
     "Options:\n"
     "  --prefer-xonsh, --xonsh, -x  --- Attempts to find and run `xonsh` instead of the user's default shell\n"
