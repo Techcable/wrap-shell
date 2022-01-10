@@ -38,7 +38,7 @@ enum shell_kind {
 };
 #define MAX_SHELL_ARGS 8
 struct detected_shell {
-    char *binary;
+    const char *binary;
     // Remember argv[0] is binary name
     char *argv[MAX_SHELL_ARGS];
     int argc;
@@ -57,7 +57,7 @@ struct detected_shell default_shell() {
     }
     return res;
 }
-struct detected_shell xonsh_shell(char* python_bin) {
+struct detected_shell xonsh_shell(const char* python_bin) {
     assert(python_bin != NULL);
     struct detected_shell res = {.argc = 3, .kind = SHELL_XONSH, .binary = python_bin};
     res.argv[1] = "-m";
@@ -76,7 +76,8 @@ int exec_shell(struct detected_shell *shell) {
     assert(shell->argc < MAX_SHELL_ARGS); // Check for overflow
     verify_shell(shell);
     fflush(stderr);
-    shell->argv[0] = shell->binary;
+    // Discard constness
+    shell->argv[0] = (char*) shell->binary;
     shell->argv[shell->argc] = NULL;
     int ret = execv(shell->binary, shell->argv);
     if (ret == 0) {
@@ -89,6 +90,25 @@ int exec_shell(struct detected_shell *shell) {
 }
 
 int protect_against_failure(pid_t child_pid, struct parsed_flags *flags, struct detected_shell *fallback_shell);
+
+const char *default_python_path() {
+    #ifdef __APPLE__
+        // Check for homebrew Python.
+        // If that is present, we almost certianlly want to use
+        // that version instead of Apple's.
+        #define HOMEBREW_PYTHON "/opt/homebrew/bin/python3"
+        if (access(HOMEBREW_PYTHON, R_OK|X_OK) == 0) {
+            return HOMEBREW_PYTHON;
+        }
+    #endif
+    char *reasonable_default = "/usr/bin/python3";
+    if (access(reasonable_default, R_OK|X_OK) != 0) {
+        fprintf(stderr, "Unable to detect system python (%s is misising)\n", reasonable_default);
+        fprintf(stderr, "Please use a standard location or specify explicitly with --python-bin\n");
+        exit(1);
+    }
+    return reasonable_default;
+}
 
 int main(int argc, char* argv[]) {
     struct arg_parser parser = init_args(argc, argv);
@@ -124,7 +144,7 @@ int main(int argc, char* argv[]) {
     }
     struct detected_shell shell;
     if (flags.prefer_xonsh) {
-        shell = xonsh_shell(flags.python_bin != NULL ? flags.python_bin : "/usr/bin/python3");
+        shell = xonsh_shell(flags.python_bin != NULL ? flags.python_bin : default_python_path());
     } else {
         shell = default_shell();
     }
