@@ -5,6 +5,10 @@
 #undef NDEBUG // Always debug
 #include <assert.h>
 #include <unistd.h>
+// TODO: Can we (or should we) include this on Mac too?
+#ifndef __APPLE__
+    #include <sys/wait.h>
+#endif
 
 struct parsed_flags {
     bool prefer_xonsh;
