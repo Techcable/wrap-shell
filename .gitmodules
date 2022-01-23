@@ -1,0 +1,3 @@
+[submodule "subprojects/plainlibs"]
+	path = subprojects/plainlibs
+	url = https://github.com/Techcable/plainlibs.git

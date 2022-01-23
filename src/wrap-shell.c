@@ -19,7 +19,7 @@ struct parsed_flags {
 
 // This is my argparse library
 // It aint much bit its honest work
-#include "idiot_argparse.h"
+#include "plain/argparse.h"
 
 const char *HELP = "wrap-shell - The simple shell manager\n\n"
     "Will find and run the user's prefered shell, with an optional fallback\n"
@@ -116,7 +116,7 @@ const char *default_python_path() {
 
 int main(int argc, char* argv[]) {
     struct arg_parser parser = init_args(argc, argv);
-    struct parsed_flags flags = {};
+    struct parsed_flags flags = {0};
     while (has_flag_args(&parser)) {
         static const char* XONSH_ALASES[] = {"xonsh", NULL};
         static const char* FALLBACK_ALIASES[] = {"fallback", NULL};
