@@ -2,3 +2,6 @@ build
 
 # Mac
 .DS_Store
+
+# .cache is used by clangd
+.cache/clangd
